@@ -72,6 +72,7 @@ class engine:
             for square in map:
                 ret += self.help.evaluate_piece(map[square]) * 1000
                 ret += self.help.evaluate_square(square, map[square]) * 10
+                ret += self.help.evaluate_pawn_advantage(square, map[square])
         return ret
     
     def grow_layer(self, node):
@@ -89,7 +90,7 @@ class engine:
             board.push(node.move)
             if board.is_game_over():
                 return self.help.test_checkmate(board)
-            elif (board.is_check() or is_cap) and (time.time() - self.start_time < 0.5 * self.tlim) and (depth < 6):
+            elif (board.is_check() or is_cap) and (time.time() - self.start_time < 0.5 * self.tlim) and (depth < 8):
                 self.grow_layer(node)
             else:
                 return self.compute_value(board)
@@ -105,7 +106,7 @@ class engine:
                 if alpha >= beta:
                     break
             if depth == 0:
-                print('odds are' + str(value))
+                print('odds are ' + str(value))
                 return pointer
             else:
                 return value
@@ -135,14 +136,17 @@ class helper:
             chess.QUEEN : 9,
             chess.KING : 1
         }
+        self.transform_tuple = (
+            0, 8, 7, 6, 5, 4, 3, 2,1
+        )
         self.square_values_master = [
             1, 2, 2, 2, 2, 2, 2, 1,
-             1, 1, 1, 1, 1, 1, 1, 1, 
+             1, 2, 1, 1, 1, 1, 2, 1, 
              1, 5, 8, 6, 6, 8, 5, 1, 
-             1, 1, 6, 9, 9, 6, 1, 1, 
-             1, 1, 6, 9, 9, 6, 1, 1, 
+             1, 3, 6, 9, 9, 6, 3, 1, 
+             1, 3, 6, 9, 9, 6, 3, 1, 
              1, 5, 8, 6, 6, 8, 5, 1,
-             1, 1, 1, 1, 1, 1, 1, 1,
+             1, 2, 1, 1, 1, 1, 2, 1,
              1, 2, 2, 2, 2, 2, 2, 1
         ]
         self.square_values = self.square_values_master.copy()
@@ -164,6 +168,14 @@ class helper:
         if not piece.color:
             value *= -1
         return value
+
+    def evaluate_pawn_advantage(self, square, piece):
+        if not piece == chess.PAWN:
+            return 0
+        rank = chess.square_rank(square)
+        if not piece.color:
+            rank = self.transform_tuple[rank]
+        return rank
 
     def test_checkmate(self, board):
         try:

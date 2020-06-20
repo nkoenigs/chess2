@@ -3,9 +3,9 @@ import chess.engine
 import math
 import time
 
-import howard as eng1
+# import howard as eng1
 # import RandomEngine as eng1
-# import rematch2 as eng1
+import rematch3 as eng1
 import rematch3 as eng2
 
 debug = open("game_debug.txt", "w")
