@@ -11,6 +11,7 @@ import RandomEngine as eng2
 debug = open("game_debug.txt", "w")
 stack = open("game_stack.pgn", "w")
 
+#todo warnign
 def take_turn(board, engine):
     color = "White"
     if board.turn == chess.BLACK:
