@@ -43,37 +43,41 @@ class engine:
 
     def play(self, board, tlim):
         # some setup
-        start_time = time.time()
-        self.create_root(board)
+        time0 = time.time()
+        self.root = chess.pgn.Game()
+        self.root.setup(board.fen())
 
         self.grow_layer(self.root)
         self.grow_layer(self.root)
+        self.grow_layer(self.root)
+        self.grow_layer(self.root)
 
-        self.unsolved_queue.join()
-        self.collect_work()
+        time1 = time.time()
+        print("build time = " + str(time1 - time0))
 
-        mid_time = time.time()
+        self.find_heuristics(self.root)
+
+        time2 = time.time()
+        print("huristic time = " + str(time2 - time1))
 
         play = self.minmax(self.root, GLOBAL_MIN, GLOBAL_MAX, self.root.board().turn, 0)
         move = play.move
 
-        end_time = time.time()
-
-        print("cycle1 time = " + str(mid_time - start_time))
-        print("cycle2 time = " + str(end_time - mid_time))
+        time3 = time.time()
+        print("minmax time = " + str(time3 - time2))
 
         return move
 
         # for leaf in self.leaves:
         #     print("val: " + str(leaf.metrics.value))
 
-    def send_node_to_workers(self, node):
-        """
-        this function sends data to the queues to evaluate a board
-        """
-        data = pickleable_data(node)
-        self.node_keys[data.key] = node
-        self.unsolved_queue.put(data)
+    def find_heuristics(self, node):
+        if len(node.variations) == 0:
+            node.comment = str(compute_value(node))
+        else:
+            for child in node.variations:
+                self.find_heuristics(child)
+        
 
     def collect_work(self):
         """
@@ -85,35 +89,22 @@ class engine:
                 node = self.node_keys.pop(data.key)
                 node.comment = str(data.value)
 
-    def create_root(self, board):
-        """
-        makes a root for the tree
-        then grows the first layer
-        """
-        self.root = chess.pgn.Game()
-        self.root.setup(board.fen())
-
-        for move in self.root.board().legal_moves:
-            new_node = self.root.add_variation(move)
-            self.send_node_to_workers(new_node)
-
-    def grow_branch(self, parent):
-        """
-        creates child nodes for all avalible moves from a given parent gameNode
-        also modifies the leaves
-        """
-        for move in parent.board().legal_moves:
-            new_node = parent.add_variation(move)
-            self.send_node_to_workers(new_node)
-
     def grow_layer(self, node):
         if len(node.variations) == 0:
-            self.grow_branch(node)
+            for move in node.board().legal_moves:
+                node.add_variation(move)
         else:
             for child in node.variations:
                 self.grow_layer(child)
+                
+        # def grow_branch(self, parent):
+        #     """
+        #     creates child nodes for all avalible moves from a given parent gameNode
+        #     also modifies the leaves
+        #     """
+        #     for move in parent.board().legal_moves:
+        #         parent.add_variation(move)
         
-
     def minmax(self, node, alpha, beta, im_max, depth):
         if len(node.variations) == 0:
             return int(node.comment)
@@ -146,6 +137,9 @@ class engine:
                 return pointer
             else:
                 return value
+
+def compute_value(node):
+    return random.randrange(100) - 50
 
 def run(unsolved_queue, solved_queue):
     """
