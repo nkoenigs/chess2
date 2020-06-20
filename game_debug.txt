@@ -1,15 +1,15 @@
 
 
 White
-g1h3
+d2d4
 r n b q k b n r
 p p p p p p p p
 . . . . . . . .
 . . . . . . . .
+. . . P . . . .
 . . . . . . . .
-. . . . . . . N
-P P P P P P P P
-R N B Q K B . R
+P P P . P P P P
+R N B Q K B N R
 
 Black
 d7d5
@@ -17,337 +17,425 @@ r n b q k b n r
 p p p . p p p p
 . . . . . . . .
 . . . p . . . .
+. . . P . . . .
 . . . . . . . .
-. . . . . . . N
-P P P P P P P P
-R N B Q K B . R
+P P P . P P P P
+R N B Q K B N R
 
 White
-h3g5
+e2e4
 r n b q k b n r
 p p p . p p p p
 . . . . . . . .
-. . . p . . N .
+. . . p . . . .
+. . . P P . . .
+. . . . . . . .
+P P P . . P P P
+R N B Q K B N R
+
+Black
+d5e4
+r n b q k b n r
+p p p . p p p p
 . . . . . . . .
 . . . . . . . .
-P P P P P P P P
-R N B Q K B . R
+. . . P p . . .
+. . . . . . . .
+P P P . . P P P
+R N B Q K B N R
+
+White
+f1b5
+r n b q k b n r
+p p p . p p p p
+. . . . . . . .
+. B . . . . . .
+. . . P p . . .
+. . . . . . . .
+P P P . . P P P
+R N B Q K . N R
+
+Black
+c7c6
+r n b q k b n r
+p p . . p p p p
+. . p . . . . .
+. B . . . . . .
+. . . P p . . .
+. . . . . . . .
+P P P . . P P P
+R N B Q K . N R
+
+White
+b5c6
+r n b q k b n r
+p p . . p p p p
+. . B . . . . .
+. . . . . . . .
+. . . P p . . .
+. . . . . . . .
+P P P . . P P P
+R N B Q K . N R
+
+Black
+b7c6
+r n b q k b n r
+p . . . p p p p
+. . p . . . . .
+. . . . . . . .
+. . . P p . . .
+. . . . . . . .
+P P P . . P P P
+R N B Q K . N R
+
+White
+f2f3
+r n b q k b n r
+p . . . p p p p
+. . p . . . . .
+. . . . . . . .
+. . . P p . . .
+. . . . . P . .
+P P P . . . P P
+R N B Q K . N R
+
+Black
+e4f3
+r n b q k b n r
+p . . . p p p p
+. . p . . . . .
+. . . . . . . .
+. . . P . . . .
+. . . . . p . .
+P P P . . . P P
+R N B Q K . N R
+
+White
+g2f3
+r n b q k b n r
+p . . . p p p p
+. . p . . . . .
+. . . . . . . .
+. . . P . . . .
+. . . . . P . .
+P P P . . . . P
+R N B Q K . N R
+
+Black
+f7f6
+r n b q k b n r
+p . . . p . p p
+. . p . . p . .
+. . . . . . . .
+. . . P . . . .
+. . . . . P . .
+P P P . . . . P
+R N B Q K . N R
+
+White
+c2c3
+r n b q k b n r
+p . . . p . p p
+. . p . . p . .
+. . . . . . . .
+. . . P . . . .
+. . P . . P . .
+P P . . . . . P
+R N B Q K . N R
 
 Black
 c8f5
 r n . q k b n r
-p p p . p p p p
-. . . . . . . .
-. . . p . b N .
-. . . . . . . .
-. . . . . . . .
-P P P P P P P P
-R N B Q K B . R
+p . . . p . p p
+. . p . . p . .
+. . . . . b . .
+. . . P . . . .
+. . P . . P . .
+P P . . . . . P
+R N B Q K . N R
 
 White
-g5h7
+d1d3
 r n . q k b n r
-p p p . p p p N
-. . . . . . . .
-. . . p . b . .
-. . . . . . . .
-. . . . . . . .
-P P P P P P P P
-R N B Q K B . R
+p . . . p . p p
+. . p . . p . .
+. . . . . b . .
+. . . P . . . .
+. . P Q . P . .
+P P . . . . . P
+R N B . K . N R
 
 Black
-h8h7
-r n . q k b n .
-p p p . p p p r
+f5d3
+r n . q k b n r
+p . . . p . p p
+. . p . . p . .
 . . . . . . . .
-. . . p . b . .
-. . . . . . . .
-. . . . . . . .
-P P P P P P P P
-R N B Q K B . R
+. . . P . . . .
+. . P b . P . .
+P P . . . . . P
+R N B . K . N R
 
 White
-h1g1
-r n . q k b n .
-p p p . p p p r
+e1d2
+r n . q k b n r
+p . . . p . p p
+. . p . . p . .
 . . . . . . . .
-. . . p . b . .
-. . . . . . . .
-. . . . . . . .
-P P P P P P P P
-R N B Q K B R .
+. . . P . . . .
+. . P b . P . .
+P P . K . . . P
+R N B . . . N R
 
 Black
-h7h2
-r n . q k b n .
-p p p . p p p .
+d3c4
+r n . q k b n r
+p . . . p . p p
+. . p . . p . .
 . . . . . . . .
-. . . p . b . .
-. . . . . . . .
-. . . . . . . .
-P P P P P P P r
-R N B Q K B R .
+. . b P . . . .
+. . P . . P . .
+P P . K . . . P
+R N B . . . N R
 
 White
-g1h1
-r n . q k b n .
-p p p . p p p .
+b2b3
+r n . q k b n r
+p . . . p . p p
+. . p . . p . .
 . . . . . . . .
-. . . p . b . .
-. . . . . . . .
-. . . . . . . .
-P P P P P P P r
-R N B Q K B . R
+. . b P . . . .
+. P P . . P . .
+P . . K . . . P
+R N B . . . N R
 
 Black
-h2h1
-r n . q k b n .
-p p p . p p p .
+c4f1
+r n . q k b n r
+p . . . p . p p
+. . p . . p . .
 . . . . . . . .
-. . . p . b . .
+. . . P . . . .
+. P P . . P . .
+P . . K . . . P
+R N B . . b N R
+
+White
+d2e1
+r n . q k b n r
+p . . . p . p p
+. . p . . p . .
 . . . . . . . .
+. . . P . . . .
+. P P . . P . .
+P . . . . . . P
+R N B . K b N R
+
+Black
+f1g2
+r n . q k b n r
+p . . . p . p p
+. . p . . p . .
 . . . . . . . .
-P P P P P P P .
-R N B Q K B . r
+. . . P . . . .
+. P P . . P . .
+P . . . . . b P
+R N B . K . N R
+
+White
+c1f4
+r n . q k b n r
+p . . . p . p p
+. . p . . p . .
+. . . . . . . .
+. . . P . B . .
+. P P . . P . .
+P . . . . . b P
+R N . . K . N R
+
+Black
+g2h1
+r n . q k b n r
+p . . . p . p p
+. . p . . p . .
+. . . . . . . .
+. . . P . B . .
+. P P . . P . .
+P . . . . . . P
+R N . . K . N b
+
+White
+f4c7
+r n . q k b n r
+p . B . p . p p
+. . p . . p . .
+. . . . . . . .
+. . . P . . . .
+. P P . . P . .
+P . . . . . . P
+R N . . K . N b
+
+Black
+d8c7
+r n . . k b n r
+p . q . p . p p
+. . p . . p . .
+. . . . . . . .
+. . . P . . . .
+. P P . . P . .
+P . . . . . . P
+R N . . K . N b
+
+White
+d4d5
+r n . . k b n r
+p . q . p . p p
+. . p . . p . .
+. . . P . . . .
+. . . . . . . .
+. P P . . P . .
+P . . . . . . P
+R N . . K . N b
+
+Black
+c7h2
+r n . . k b n r
+p . . . p . p p
+. . p . . p . .
+. . . P . . . .
+. . . . . . . .
+. P P . . P . .
+P . . . . . . q
+R N . . K . N b
+
+White
+e1f1
+r n . . k b n r
+p . . . p . p p
+. . p . . p . .
+. . . P . . . .
+. . . . . . . .
+. P P . . P . .
+P . . . . . . q
+R N . . . K N b
+
+Black
+c6d5
+r n . . k b n r
+p . . . p . p p
+. . . . . p . .
+. . . p . . . .
+. . . . . . . .
+. P P . . P . .
+P . . . . . . q
+R N . . . K N b
+
+White
+c3c4
+r n . . k b n r
+p . . . p . p p
+. . . . . p . .
+. . . p . . . .
+. . P . . . . .
+. P . . . P . .
+P . . . . . . q
+R N . . . K N b
+
+Black
+h2b2
+r n . . k b n r
+p . . . p . p p
+. . . . . p . .
+. . . p . . . .
+. . P . . . . .
+. P . . . P . .
+P q . . . . . .
+R N . . . K N b
 
 White
 b1c3
-r n . q k b n .
-p p p . p p p .
-. . . . . . . .
-. . . p . b . .
-. . . . . . . .
-. . N . . . . .
-P P P P P P P .
-R . B Q K B . r
-
-Black
-d5d4
-r n . q k b n .
-p p p . p p p .
-. . . . . . . .
-. . . . . b . .
-. . . p . . . .
-. . N . . . . .
-P P P P P P P .
-R . B Q K B . r
-
-White
-c3d5
-r n . q k b n .
-p p p . p p p .
-. . . . . . . .
-. . . N . b . .
-. . . p . . . .
-. . . . . . . .
-P P P P P P P .
-R . B Q K B . r
-
-Black
-d8d5
-r n . . k b n .
-p p p . p p p .
-. . . . . . . .
-. . . q . b . .
-. . . p . . . .
-. . . . . . . .
-P P P P P P P .
-R . B Q K B . r
-
-White
-a1b1
-r n . . k b n .
-p p p . p p p .
-. . . . . . . .
-. . . q . b . .
-. . . p . . . .
-. . . . . . . .
-P P P P P P P .
-. R B Q K B . r
-
-Black
-d5a2
-r n . . k b n .
-p p p . p p p .
-. . . . . . . .
-. . . . . b . .
-. . . p . . . .
-. . . . . . . .
-q P P P P P P .
-. R B Q K B . r
-
-White
-b1a1
-r n . . k b n .
-p p p . p p p .
-. . . . . . . .
-. . . . . b . .
-. . . p . . . .
-. . . . . . . .
-q P P P P P P .
-R . B Q K B . r
-
-Black
-a2a1
-r n . . k b n .
-p p p . p p p .
-. . . . . . . .
-. . . . . b . .
-. . . p . . . .
-. . . . . . . .
-. P P P P P P .
-q . B Q K B . r
-
-White
-g2g3
-r n . . k b n .
-p p p . p p p .
-. . . . . . . .
-. . . . . b . .
-. . . p . . . .
-. . . . . . P .
-. P P P P P . .
-q . B Q K B . r
-
-Black
-e7e5
-r n . . k b n .
-p p p . . p p .
-. . . . . . . .
-. . . . p b . .
-. . . p . . . .
-. . . . . . P .
-. P P P P P . .
-q . B Q K B . r
-
-White
-g3g4
-r n . . k b n .
-p p p . . p p .
-. . . . . . . .
-. . . . p b . .
-. . . p . . P .
-. . . . . . . .
-. P P P P P . .
-q . B Q K B . r
-
-Black
-f5g4
-r n . . k b n .
-p p p . . p p .
-. . . . . . . .
-. . . . p . . .
-. . . p . . b .
-. . . . . . . .
-. P P P P P . .
-q . B Q K B . r
-
-White
-f2f3
-r n . . k b n .
-p p p . . p p .
-. . . . . . . .
-. . . . p . . .
-. . . p . . b .
-. . . . . P . .
-. P P P P . . .
-q . B Q K B . r
-
-Black
-g4e6
-r n . . k b n .
-p p p . . p p .
-. . . . b . . .
-. . . . p . . .
-. . . p . . . .
-. . . . . P . .
-. P P P P . . .
-q . B Q K B . r
-
-White
-e1f2
-r n . . k b n .
-p p p . . p p .
-. . . . b . . .
-. . . . p . . .
-. . . p . . . .
-. . . . . P . .
-. P P P P K . .
-q . B Q . B . r
-
-Black
-f7f6
-r n . . k b n .
-p p p . . . p .
-. . . . b p . .
-. . . . p . . .
-. . . p . . . .
-. . . . . P . .
-. P P P P K . .
-q . B Q . B . r
-
-White
-f2g3
-r n . . k b n .
-p p p . . . p .
-. . . . b p . .
-. . . . p . . .
-. . . p . . . .
-. . . . . P K .
-. P P P P . . .
-q . B Q . B . r
-
-Black
-h1g1
-r n . . k b n .
-p p p . . . p .
-. . . . b p . .
-. . . . p . . .
-. . . p . . . .
-. . . . . P K .
-. P P P P . . .
-q . B Q . B r .
-
-White
-g3h4
-r n . . k b n .
-p p p . . . p .
-. . . . b p . .
-. . . . p . . .
-. . . p . . . K
-. . . . . P . .
-. P P P P . . .
-q . B Q . B r .
-
-Black
-g7g5
-r n . . k b n .
-p p p . . . . .
-. . . . b p . .
-. . . . p . p .
-. . . p . . . K
-. . . . . P . .
-. P P P P . . .
-q . B Q . B r .
-
-White
-h4h5
-r n . . k b n .
-p p p . . . . .
-. . . . b p . .
-. . . . p . p K
-. . . p . . . .
-. . . . . P . .
-. P P P P . . .
-q . B Q . B r .
-
-Black
-e6f7
-r n . . k b n .
-p p p . . b . .
+r n . . k b n r
+p . . . p . p p
 . . . . . p . .
-. . . . p . p K
 . . . p . . . .
-. . . . . P . .
-. P P P P . . .
-q . B Q . B r .
+. . P . . . . .
+. P N . . P . .
+P q . . . . . .
+R . . . . K N b
+
+Black
+b2a1
+r n . . k b n r
+p . . . p . p p
+. . . . . p . .
+. . . p . . . .
+. . P . . . . .
+. P N . . P . .
+P . . . . . . .
+q . . . . K N b
+
+White
+f1f2
+r n . . k b n r
+p . . . p . p p
+. . . . . p . .
+. . . p . . . .
+. . P . . . . .
+. P N . . P . .
+P . . . . K . .
+q . . . . . N b
+
+Black
+a1c3
+r n . . k b n r
+p . . . p . p p
+. . . . . p . .
+. . . p . . . .
+. . P . . . . .
+. P q . . P . .
+P . . . . K . .
+. . . . . . N b
+
+White
+g1e2
+r n . . k b n r
+p . . . p . p p
+. . . . . p . .
+. . . p . . . .
+. . P . . . . .
+. P q . . P . .
+P . . . N K . .
+. . . . . . . b
+
+Black
+c3f3
+r n . . k b n r
+p . . . p . p p
+. . . . . p . .
+. . . p . . . .
+. . P . . . . .
+. P . . . q . .
+P . . . N K . .
+. . . . . . . b
+
+White
+f2g1
+r n . . k b n r
+p . . . p . p p
+. . . . . p . .
+. . . p . . . .
+. . P . . . . .
+. P . . . q . .
+P . . . N . . .
+. . . . . . K b
+
+Black
+f3g2
+r n . . k b n r
+p . . . p . p p
+. . . . . p . .
+. . . p . . . .
+. . P . . . . .
+. P . . . . . .
+P . . . N . q .
+. . . . . . K b

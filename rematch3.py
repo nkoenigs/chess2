@@ -24,6 +24,8 @@ class engine:
         self.root = None
         self.layers = 3
         self.help = helper()
+        self.start_time = 0
+        self.tlim = tlim
 
     def request(self):
         return []
@@ -34,10 +36,12 @@ class engine:
     def play(self, board, tlim):
         # some setup
         time0 = time.time()
+        self.start_time = time0
         self.key_counter = 0
         self.keys_left = 0
         self.root = chess.pgn.Game()
         self.root.setup(board.fen())
+        self.help.add_noise()
 
         for _ in range(self.layers):
             self.grow_layer(self.root)
@@ -53,8 +57,7 @@ class engine:
 
         return move
         
-    def compute_value(self, node):
-        board = node.board()
+    def compute_value(self, board):
         ret = 0
         if(board.is_game_over()):
             res = board.result()
@@ -69,7 +72,6 @@ class engine:
             for square in map:
                 ret += self.help.evaluate_piece(map[square]) * 1000
                 ret += self.help.evaluate_square(square, map[square]) * 10
-            # ret += self.help.evaluate_attacks(board)
         return ret
     
     def grow_layer(self, node):
@@ -82,7 +84,15 @@ class engine:
         
     def minmax(self, node, alpha, beta, im_max, depth):
         if node.is_end():
-            return self.compute_value(node)
+            board = node.parent.board()
+            is_cap = board.is_capture(node.move)
+            board.push(node.move)
+            if board.is_game_over():
+                return self.help.test_checkmate(board)
+            elif (board.is_check() or is_cap) and (time.time() - self.start_time < 0.5 * self.tlim) and (depth < 6):
+                self.grow_layer(node)
+            else:
+                return self.compute_value(board)
         pointer = None
         if im_max:
             value = GLOBAL_MIN
@@ -125,7 +135,7 @@ class helper:
             chess.QUEEN : 9,
             chess.KING : 1
         }
-        self.square_values = (
+        self.square_values_master = [
             1, 2, 2, 2, 2, 2, 2, 1,
              1, 1, 1, 1, 1, 1, 1, 1, 
              1, 5, 8, 6, 6, 8, 5, 1, 
@@ -134,7 +144,14 @@ class helper:
              1, 5, 8, 6, 6, 8, 5, 1,
              1, 1, 1, 1, 1, 1, 1, 1,
              1, 2, 2, 2, 2, 2, 2, 1
-            )
+        ]
+        self.square_values = self.square_values_master.copy()
+
+    def add_noise(self):
+        self.square_values = self.square_values_master.copy()
+        for sq in range(64):
+            rand = random.randrange(-100,100)/80
+            self.square_values[sq] += rand
 
     def evaluate_square(self, square, piece):
         value = self.square_values[square]
@@ -148,9 +165,13 @@ class helper:
             value *= -1
         return value
 
-    def evaluate_attacks(self, board):
-        value = 0
-        for square in range(64):
-            value += len(board.attackers(True, square))
-            value -= len(board.attackers(False, square))
-        return value
+    def test_checkmate(self, board):
+        try:
+            res = board.result()
+            if res == '1-0':
+                return GLOBAL_MAX - 1
+            if res == '0-1':
+                return GLOBAL_MIN + 1
+            return 0
+        except:
+            return 0

@@ -114,5 +114,4 @@ class engine:
         pass
 
     def request (self):
-        print("Nathan requested to go fuck himself")
         return []
