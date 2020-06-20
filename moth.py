@@ -8,7 +8,6 @@ GLOBAL_MIN = -1000000
 GLOBAL_MAX = 1000000
 
 class engine:
-
     def __init__(self, tlim):
         self.root = None
         self.layers = 3
