@@ -48,7 +48,7 @@ class engine:
 
         self.grow_layer(self.root)
         self.grow_layer(self.root)
-        
+
         self.unsolved_queue.join()
         self.collect_work()
 
@@ -58,6 +58,9 @@ class engine:
         move = play.move
 
         end_time = time.time()
+
+        print("cycle1 time = " + str(mid_time - start_time))
+        print("cycle2 time = " + str(end_time - mid_time))
 
         return move
 
@@ -80,8 +83,7 @@ class engine:
             if not self.solved_queue.empty():
                 data = self.solved_queue.get()
                 node = self.node_keys.pop(data.key)
-                node.metrics.value = data.value
-                node.metrics.interest = data.interest
+                node.comment = str(data.value)
 
     def create_root(self, board):
         """
@@ -93,7 +95,6 @@ class engine:
 
         for move in self.root.board().legal_moves:
             new_node = self.root.add_variation(move)
-            new_node.metrics = metrics(move)
             self.send_node_to_workers(new_node)
 
     def grow_branch(self, parent):
@@ -103,7 +104,6 @@ class engine:
         """
         for move in parent.board().legal_moves:
             new_node = parent.add_variation(move)
-            new_node.metrics = parent.metrics.childs_metrics()
             self.send_node_to_workers(new_node)
 
     def grow_layer(self, node):
@@ -116,7 +116,7 @@ class engine:
 
     def minmax(self, node, alpha, beta, im_max, depth):
         if len(node.variations) == 0:
-            return node.metrics.value
+            return int(node.comment)
         pointer = None
         if im_max:
             value = GLOBAL_MIN
@@ -161,25 +161,6 @@ def run(unsolved_queue, solved_queue):
 
             solved_queue.put(ret)
             unsolved_queue.task_done()
-
-class metrics:
-    """
-    An idea is complex object desgined to help workers evaluate moves
-    """
-    def __init__(self, move):
-        self.depth = 1
-        self.root_move = move
-        self.value = None
-        self.interest = None
-
-    def childs_metrics(self):
-        """
-        returns updated metrics for my child
-        """
-        childs = metrics(None)
-        childs.depth = self.depth + 1
-        childs.root_move = self.root_move
-        return childs
 
 class pickleable_data:
     def __init__(self, node):
