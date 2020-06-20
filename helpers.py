@@ -2,7 +2,7 @@ import chess
 import random
 import re
 
-class meth():
+class methods():
 
     def __init__(self):
         """
@@ -30,24 +30,6 @@ class meth():
         leg_move = str(board.legal_moves)
         list = re.findall(self.parser ,leg_move)
         return list    
-
-    @staticmethod
-    def evaluatePosition(i):
-        """
-        weighs a given sqare for value
-        """
-        tile_values = [
-         5, 5, 5, 6, 6, 5, 5, 5,
-         1, 7, 4, 4, 4, 4, 7, 1,
-         1, 4, 8, 8, 8, 8, 4, 1,
-         1, 4, 8, 9, 9, 8, 4, 1 ]
-
-        # fold board in half
-        if i >= 32:
-            i = chess.square_mirror(i)
-
-        #return the value of the tile
-        return tile_values[i]
 
     @staticmethod
     def boardToListList(board):

@@ -1,14 +1,16 @@
 import chess
 import random
-import helper
+import helpers
+
+import multiprocessing as mp
 
 class engine:
     # needs initializer
-    def __init__(self):
+    def __init__(self, tlim):
         self.turn  = 0
     
     def play(self, board, tlim):
-        help = helper.meth()
+        help = helpers.methods()
         list = help.getLegalMoveList(board)
         index = random.randint(0, len(list) - 1)
         optimal_play = list[index]
@@ -16,3 +18,6 @@ class engine:
         if self.turn > 101:
             return chess.Move.null()
         return optimal_play
+
+    def close(self):
+        pass
