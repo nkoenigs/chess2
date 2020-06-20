@@ -168,29 +168,3 @@ class unpickleable_data:
         self.key = key
         self.value = value 
         self.interest = interest
-
-        # # get all legal moves
-        # if bool(board.legal_moves) == False:
-        #     return chess.Move.null()
-        # move_list = board.legal_moves
-
-        # for move in move_list:
-        #     self.unsolved_queue.put([move, 0])
-        #     self.active_requests += 1
-        # self.unsolved_queue.join()
-
-        # # get the workers results for each board
-        # move_list = []
-        # while self.active_requests > 0:
-        #     if not self.solved_queue.empty():
-        #         rated_move = self.solved_queue.get()
-        #         move_list.append(rated_move)
-        #         self.active_requests -= 1
-
-        # # play the highest rated move
-        # highest_rated = ["", 0]
-        # for move in move_list:
-        #     if move[1] > highest_rated[1]:
-        #         highest_rated = move
-
-        # return highest_rated[0]
