@@ -3,10 +3,10 @@ import chess.engine
 import math
 import time
 
-# import howard as eng1
+import howard as eng1
 # import RandomEngine as eng1
-import rematch3 as eng1
-import rematch3 as eng2
+# import moth as eng1
+import moth as eng2
 
 debug = open("game_debug.txt", "w")
 stack = open("game_stack.pgn", "w")
@@ -47,7 +47,7 @@ def take_turn(board, engine):
 if __name__ == '__main__':
     tlim = 5
     print("\n\n\n\n\n\n\n")
-    white_engine = eng1.engine(tlim)
+    white_engine = eng1.engine(tlim*4)
     black_engine = eng2.engine(tlim)
     engines = {True : white_engine, False: black_engine}
         
