@@ -24,7 +24,6 @@ class engine:
     def __init__(self, tlim):
         self.solved_queue = mp.Queue()
         self.unsolved_queue = mp.JoinableQueue()
-        self.leaves = []
         self.root = None
         self.node_keys = {}
 
@@ -47,9 +46,11 @@ class engine:
         start_time = time.time()
         self.create_root(board)
 
-        leaves_copy = self.leaves.copy()
-        for leaf in leaves_copy:
-            self.grow_branch(leaf)
+        self.grow_layer(self.root)
+        self.grow_layer(self.root)
+        
+        self.unsolved_queue.join()
+        self.collect_work()
 
         mid_time = time.time()
 
@@ -81,7 +82,6 @@ class engine:
                 node = self.node_keys.pop(data.key)
                 node.metrics.value = data.value
                 node.metrics.interest = data.interest
-                self.leaves.append(node)
 
     def create_root(self, board):
         """
@@ -96,22 +96,23 @@ class engine:
             new_node.metrics = metrics(move)
             self.send_node_to_workers(new_node)
 
-        self.unsolved_queue.join()
-        self.collect_work()
-
     def grow_branch(self, parent):
         """
         creates child nodes for all avalible moves from a given parent gameNode
         also modifies the leaves
         """
-        self.leaves.remove(parent)
         for move in parent.board().legal_moves:
             new_node = parent.add_variation(move)
             new_node.metrics = parent.metrics.childs_metrics()
             self.send_node_to_workers(new_node)
 
-        self.unsolved_queue.join()
-        self.collect_work()
+    def grow_layer(self, node):
+        if len(node.variations) == 0:
+            self.grow_branch(node)
+        else:
+            for child in node.variations:
+                self.grow_layer(child)
+        
 
     def minmax(self, node, alpha, beta, im_max, depth):
         if len(node.variations) == 0:
