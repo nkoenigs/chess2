@@ -43,37 +43,36 @@ class engine:
 
     def play(self, board, tlim):
         # some setup
-        start_time = time.time()
-        self.create_root(board)
+        time0 = time.time()
+        self.root = chess.pgn.Game()
+        self.root.setup(board.fen())
 
         self.grow_layer(self.root)
         self.grow_layer(self.root)
+        self.grow_layer(self.root)
+        self.grow_layer(self.root)
 
-        self.unsolved_queue.join()
-        self.collect_work()
+        time1 = time.time()
 
-        mid_time = time.time()
+        
+
+        time2 = time.time()
 
         play = self.minmax(self.root, GLOBAL_MIN, GLOBAL_MAX, self.root.board().turn, 0)
         move = play.move
 
-        end_time = time.time()
+        time3 = time.time()
 
-        print("cycle1 time = " + str(mid_time - start_time))
-        print("cycle2 time = " + str(end_time - mid_time))
+        print("build time = " + str(time1 - time0))
+        print("huristic time = " + str(time2 - time1))
+        print("minmax time = " + str(time3 - time2))
 
         return move
 
         # for leaf in self.leaves:
         #     print("val: " + str(leaf.metrics.value))
 
-    def send_node_to_workers(self, node):
-        """
-        this function sends data to the queues to evaluate a board
-        """
-        data = pickleable_data(node)
-        self.node_keys[data.key] = node
-        self.unsolved_queue.put(data)
+        
 
     def collect_work(self):
         """
@@ -85,17 +84,6 @@ class engine:
                 node = self.node_keys.pop(data.key)
                 node.comment = str(data.value)
 
-    def create_root(self, board):
-        """
-        makes a root for the tree
-        then grows the first layer
-        """
-        self.root = chess.pgn.Game()
-        self.root.setup(board.fen())
-
-        for move in self.root.board().legal_moves:
-            new_node = self.root.add_variation(move)
-            self.send_node_to_workers(new_node)
 
     def grow_branch(self, parent):
         """
@@ -104,7 +92,6 @@ class engine:
         """
         for move in parent.board().legal_moves:
             new_node = parent.add_variation(move)
-            self.send_node_to_workers(new_node)
 
     def grow_layer(self, node):
         if len(node.variations) == 0:
