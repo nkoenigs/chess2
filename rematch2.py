@@ -23,8 +23,10 @@ class engine:
     """
     def __init__(self, tlim):
         self.solved_queue = mp.Queue()
-        self.unsolved_queue = mp.JoinableQueue()
+        self.unsolved_queue = mp.Queue()
         self.root = None
+        self.key_counter = 0
+        self.keys_left = 0
         self.node_keys = {}
 
     def request(self):
@@ -44,10 +46,11 @@ class engine:
     def play(self, board, tlim):
         # some setup
         time0 = time.time()
+        self.key_counter = 0
+        self.keys_left = 0
         self.root = chess.pgn.Game()
         self.root.setup(board.fen())
 
-        self.grow_layer(self.root)
         self.grow_layer(self.root)
         self.grow_layer(self.root)
         self.grow_layer(self.root)
@@ -56,6 +59,7 @@ class engine:
         print("build time = " + str(time1 - time0))
 
         self.find_heuristics(self.root)
+        self.assign_heuristics()
 
         time2 = time.time()
         print("huristic time = " + str(time2 - time1))
@@ -65,6 +69,7 @@ class engine:
 
         time3 = time.time()
         print("minmax time = " + str(time3 - time2))
+        print("number of huristics computed = " + str(self.key_counter))
 
         return move
 
@@ -72,41 +77,39 @@ class engine:
         #     print("val: " + str(leaf.metrics.value))
 
     def find_heuristics(self, node):
-        if len(node.variations) == 0:
-            node.comment = str(compute_value(node))
+        if node.is_end():
+            self.compute_value(node)
         else:
             for child in node.variations:
                 self.find_heuristics(child)
         
-
-    def collect_work(self):
-        """
-        puts unpickled data into its node
-        """
-        while len(self.node_keys) > 0:
+    def compute_value(self, node):
+        fen = node.board().fen()
+        key = self.key_counter
+        self.key_counter += 1
+        self.keys_left += 1
+        self.node_keys[key] = node
+        pickle = (fen, key)
+        self.unsolved_queue.put(pickle)
+    
+    def assign_heuristics(self):
+        while self.keys_left > 0:
             if not self.solved_queue.empty():
-                data = self.solved_queue.get()
-                node = self.node_keys.pop(data.key)
-                node.comment = str(data.value)
-
+                hold = self.solved_queue.get()
+                self.node_keys[hold[1]].comment = str(hold[0])
+    
+                self.keys_left -= 1
+    
     def grow_layer(self, node):
-        if len(node.variations) == 0:
+        if node.is_end():
             for move in node.board().legal_moves:
                 node.add_variation(move)
         else:
             for child in node.variations:
                 self.grow_layer(child)
-                
-        # def grow_branch(self, parent):
-        #     """
-        #     creates child nodes for all avalible moves from a given parent gameNode
-        #     also modifies the leaves
-        #     """
-        #     for move in parent.board().legal_moves:
-        #         parent.add_variation(move)
         
     def minmax(self, node, alpha, beta, im_max, depth):
-        if len(node.variations) == 0:
+        if node.is_end():
             return int(node.comment)
         pointer = None
         if im_max:
@@ -138,35 +141,52 @@ class engine:
             else:
                 return value
 
-def compute_value(node):
-    return random.randrange(100) - 50
-
 def run(unsolved_queue, solved_queue):
     """
     run this as a process in the background
     use queues to pass in ideas to evaluate
     """
+    board = chess.Board()
+    help = helper()
     while True:
         if not unsolved_queue.empty():
-            pkobj = unsolved_queue.get()
+            pickle = unsolved_queue.get()
+            fen = pickle[0]
+            ret = 0
+            board.set_fen(fen)
 
-            rand = random.randrange(100) - 50
-            ret = unpickleable_data(rand, rand, pkobj.key)
+            if(board.is_game_over()):
+                res = board.result()
+                if res == '1-0':
+                    ret = GLOBAL_MAX - 1
+                elif res == '0-1':
+                    ret = GLOBAL_MIN + 1
+                else:
+                    pass
+            else:
+                net_piece_value = 0
+                map = board.piece_map()
+                for square in map:
+                    net_piece_value += help.evaluate_piece(map[square])
 
-            solved_queue.put(ret)
-            unsolved_queue.task_done()
+                ret = net_piece_value
 
-class pickleable_data:
-    def __init__(self, node):
-        global key_counter
-        self.after_fen =  node.board().fen()
-        self.before_fen = node.parent.board().fen()
-        self.move = node.move 
-        self.key = key_counter
-        key_counter += 1
+            out = (ret, pickle[1])
+            solved_queue.put(out)
 
-class unpickleable_data:
-    def __init__(self, value, interest, key):
-        self.key = key
-        self.value = value 
-        self.interest = interest
+class helper:
+    def __init__(self):
+        self.piece_values = {
+            chess.PAWN : 1,
+            chess.KNIGHT : 3,
+            chess.BISHOP : 3,
+            chess.ROOK : 5,
+            chess.QUEEN : 9,
+            chess.KING : 1
+        }
+
+    def evaluate_piece(self, piece):
+        value = self.piece_values[piece.piece_type]
+        if not piece.color:
+            value *= -1
+        return value
