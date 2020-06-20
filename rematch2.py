@@ -25,9 +25,12 @@ class engine:
         self.solved_queue = mp.Queue()
         self.unsolved_queue = mp.Queue()
         self.root = None
+        self.tlim = float(tlim)
         self.key_counter = 0
         self.keys_left = 0
         self.node_keys = {}
+        self.last_hur_time = 2
+        self.layers = 3
 
     def request(self):
         """
@@ -51,9 +54,13 @@ class engine:
         self.root = chess.pgn.Game()
         self.root.setup(board.fen())
 
-        self.grow_layer(self.root)
-        self.grow_layer(self.root)
-        self.grow_layer(self.root)
+        if self.last_hur_time < 0.1 * self.tlim:
+            self.layers += 1
+        if self.last_hur_time > 0.9 * self.tlim:
+            self.layers -= 1
+
+        for _ in range(self.layers):
+            self.grow_layer(self.root)
 
         time1 = time.time()
         print("build time = " + str(time1 - time0))
@@ -62,6 +69,7 @@ class engine:
         self.assign_heuristics()
 
         time2 = time.time()
+        self.last_hur_time = time2 - time1
         print("huristic time = " + str(time2 - time1))
 
         play = self.minmax(self.root, GLOBAL_MIN, GLOBAL_MAX, self.root.board().turn, 0)
@@ -104,7 +112,7 @@ class engine:
         if node.is_end():
             for move in node.board().legal_moves:
                 node.add_variation(move)
-        else:
+        elif not node.board().is_game_over():
             for child in node.variations:
                 self.grow_layer(child)
         
@@ -164,12 +172,15 @@ def run(unsolved_queue, solved_queue):
                 else:
                     pass
             else:
-                net_piece_value = 0
+                piece_v = 0
+                square_v = 0
                 map = board.piece_map()
                 for square in map:
-                    net_piece_value += help.evaluate_piece(map[square])
+                    piece_v += help.evaluate_piece(map[square])
+                    square_v += help.evaluate_square(square, map[square])
 
-                ret = net_piece_value
+                ret = piece_v*1000 + square_v
+
 
             out = (ret, pickle[1])
             solved_queue.put(out)
@@ -184,6 +195,22 @@ class helper:
             chess.QUEEN : 9,
             chess.KING : 1
         }
+        self.square_values = (
+            1, 2, 2, 2, 2, 2, 2, 1,
+             1, 1, 1, 1, 1, 1, 1, 1, 
+             1, 5, 8, 6, 6, 8, 5, 1, 
+             1, 1, 6, 9, 9, 6, 1, 1, 
+             1, 1, 6, 9, 9, 6, 1, 1, 
+             1, 5, 8, 6, 6, 8, 5, 1,
+             1, 1, 1, 1, 1, 1, 1, 1,
+             1, 2, 2, 2, 2, 2, 2, 1
+            )
+
+    def evaluate_square(self, square, piece):
+        value = self.square_values[square]
+        if not piece.color:
+            value *= -1
+        return value
 
     def evaluate_piece(self, piece):
         value = self.piece_values[piece.piece_type]

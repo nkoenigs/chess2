@@ -3,7 +3,7 @@ import chess.engine
 import math
 import time
 
-import RandomEngine as eng1
+import RandomTake as eng1
 # import RandomEngine as eng2
 # import rematch2 as eng1
 import rematch2 as eng2
@@ -63,6 +63,6 @@ if __name__ == '__main__':
     stack.close()
     print('\n\nGG!')
     try:
-        print(str(board.result())+' in '+str(math.ceil(len(board.move_stack)/2))+'\n\n')
+        print(str(board.result())+' in '+ str(math.ceil(len(board.move_stack)/2))+'\n\n')
     except:
         pass
