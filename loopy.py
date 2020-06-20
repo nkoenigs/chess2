@@ -116,6 +116,7 @@ class engine:
         """
         Play a turn witht the chess engine
         """
+        time0 = time.time()
         if not hasattr(self,'color'):
             if board.turn == chess.WHITE:
                 # print('WHITE\n\n')
@@ -132,11 +133,17 @@ class engine:
             # start_time = time.time()
             depth = 3
             self.recursive_tree(root,0,depth)
+            time1 = time.time()
             # end_time = time.time()
             # print("Time for Depth "+str(depth)+"\n\t"+str(end_time-start_time))
             alpha = 1000
             beta = -alpha
             val, play = self.alphabeta(root,0,alpha,beta,self.agent) #fix this true
+            time2 = time.time()
+
+            print("A build time = " + str(time1 - time0))
+            print("A huristic time = " + str(time2 - time1))
+
             return play.move
         else:
             return chess.Move.null()

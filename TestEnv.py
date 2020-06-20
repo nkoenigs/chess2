@@ -40,11 +40,6 @@ if __name__ == '__main__':
     white_engine = eng1.engine(tlim)
     black_engine = eng2.engine(tlim)
     engines = {True : white_engine, False: black_engine}
-
-    for process in white_engine.request():
-        process.start()
-    for process in black_engine.request():
-        process.start()
         
     board = chess.Board()
 
@@ -55,9 +50,6 @@ if __name__ == '__main__':
         board = temp_board
         if board.is_game_over():
             break
-
-    white_engine.close()
-    black_engine.close()
 
     debug.close()
     stack.close()

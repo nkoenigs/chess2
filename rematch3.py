@@ -24,6 +24,7 @@ class engine:
     def __init__(self, tlim):
         self.root = None
         self.layers = 3
+        self.help = helper()
 
     def request(self):
         return []
@@ -45,8 +46,7 @@ class engine:
         time1 = time.time()
         print("build time = " + str(time1 - time0))
 
-        self.find_heuristics(self.root)
-        self.assign_heuristics()
+        # self.find_heuristics(self.root)
 
         time2 = time.time()
         self.last_hur_time = time2 - time1
@@ -57,7 +57,6 @@ class engine:
 
         time3 = time.time()
         print("minmax time = " + str(time3 - time2))
-        print("number of huristics computed = " + str(self.key_counter))
 
         return move
 
@@ -72,21 +71,26 @@ class engine:
                 self.find_heuristics(child)
         
     def compute_value(self, node):
-        fen = node.board().fen()
-        key = self.key_counter
-        self.key_counter += 1
-        self.keys_left += 1
-        self.node_keys[key] = node
-        pickle = (fen, key)
-        self.unsolved_queue.put(pickle)
-    
-    def assign_heuristics(self):
-        while self.keys_left > 0:
-            if not self.solved_queue.empty():
-                hold = self.solved_queue.get()
-                self.node_keys[hold[1]].comment = str(hold[0])
-    
-                self.keys_left -= 1
+        board = node.board()
+        if(board.is_game_over()):
+            res = board.result()
+            if res == '1-0':
+                ret = GLOBAL_MAX - 1
+            elif res == '0-1':
+                ret = GLOBAL_MIN + 1
+            else:
+                pass
+        else:
+            piece_v = 0
+            square_v = 0
+            map = board.piece_map()
+            for square in map:
+                piece_v += self.help.evaluate_piece(map[square])
+                square_v += self.help.evaluate_square(square, map[square])
+
+            ret = piece_v*1000 + square_v
+        # node.comment = str(ret)
+        return ret
     
     def grow_layer(self, node):
         if node.is_end():
@@ -98,7 +102,8 @@ class engine:
         
     def minmax(self, node, alpha, beta, im_max, depth):
         if node.is_end():
-            return int(node.comment)
+            # return int(node.comment)
+            return self.compute_value(node)
         pointer = None
         if im_max:
             value = GLOBAL_MIN
@@ -128,42 +133,6 @@ class engine:
                 return pointer
             else:
                 return value
-
-def run(unsolved_queue, solved_queue):
-    """
-    run this as a process in the background
-    use queues to pass in ideas to evaluate
-    """
-    board = chess.Board()
-    help = helper()
-    while True:
-        if not unsolved_queue.empty():
-            pickle = unsolved_queue.get()
-            fen = pickle[0]
-            ret = 0
-            board.set_fen(fen)
-
-            if(board.is_game_over()):
-                res = board.result()
-                if res == '1-0':
-                    ret = GLOBAL_MAX - 1
-                elif res == '0-1':
-                    ret = GLOBAL_MIN + 1
-                else:
-                    pass
-            else:
-                piece_v = 0
-                square_v = 0
-                map = board.piece_map()
-                for square in map:
-                    piece_v += help.evaluate_piece(map[square])
-                    square_v += help.evaluate_square(square, map[square])
-
-                ret = piece_v*1000 + square_v
-
-
-            out = (ret, pickle[1])
-            solved_queue.put(out)
 
 class helper:
     def __init__(self):
