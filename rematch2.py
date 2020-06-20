@@ -1,8 +1,7 @@
 import multiprocessing as mp
 import time
 import chess
-
-import worker
+import random
 
 'uh oh here here i go again...'
 
@@ -29,7 +28,7 @@ class engine:
         """
         pool = []
         for _ in range(mp.cpu_count() - 1):
-            new_thread = mp.Process(target= worker.run, args= (self.unsolved_queue, self.solved_queue, ))
+            new_thread = mp.Process(target= run, args= (self.unsolved_queue, self.solved_queue, ))
             new_thread.daemon = True
             pool.append(new_thread)
         return pool
@@ -63,6 +62,23 @@ class engine:
                 highest_rated = move
 
         return highest_rated[0]
-        
+
+def run(unsolved_queue, solved_queue):
+    """
+    run this as a process in the background
+    use queues to pass in ideas to evaluate
+    """
+    while True:
+        if not unsolved_queue.empty():
+            move = unsolved_queue.get()
+            move[1] = random.randrange(1000)
+            solved_queue.put(move)
+            unsolved_queue.task_done()
+
+# class idea:
+#     """
+#     An idea is complexe object desgined to help workers evaluate moves
+#     """
+#     def __init__(self):
 
 

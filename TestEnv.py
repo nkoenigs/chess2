@@ -35,7 +35,6 @@ def take_turn(board, engine):
 
 
 if __name__ == '__main__':
-
     tlim = 1
     print("\n\n\n\n\n\n\n")
     white_engine = eng1.engine(tlim)
