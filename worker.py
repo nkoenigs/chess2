@@ -12,3 +12,4 @@ def run(unsolved_queue, solved_queue):
             move[1] = random.randrange(1000)
             solved_queue.put(move)
             unsolved_queue.task_done()
+

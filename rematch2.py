@@ -1,7 +1,7 @@
 import multiprocessing as mp
 import time
+import chess
 
-import helpers
 import worker
 
 'uh oh here here i go again...'
@@ -19,12 +19,9 @@ class engine:
     2 
     """
     def __init__(self, tlim):
-        # create helper object for parsing nonsence
-        self.helpers = helpers.methods()
-
-        # create queues for interacting with forign threads
         self.solved_queue = mp.Queue()
         self.unsolved_queue = mp.JoinableQueue()
+        self.active_requests = 0
 
     def request(self):
         """
@@ -42,25 +39,26 @@ class engine:
 
     def play(self, board, tlim):
         # get all legal moves
-        move_list = []
-        board_list = self.helpers.getLegalMoveList(board)
-        for board in board_list:
-            move_list.append([board , 0])
+        if bool(board.legal_moves) == False:
+            return chess.Move.null()
+        move_list = board.legal_moves
 
-        # send moves for all boards to workers
         for move in move_list:
-            self.unsolved_queue.put(move)
+            self.unsolved_queue.put([move, 0])
+            self.active_requests += 1
         self.unsolved_queue.join()
 
         # get the workers results for each board
-        final_move_list = []
-        while not self.solved_queue.empty():
-            rated_move = self.solved_queue.get()
-            final_move_list.append(rated_move)
+        move_list = []
+        while self.active_requests > 0:
+            if not self.solved_queue.empty():
+                rated_move = self.solved_queue.get()
+                move_list.append(rated_move)
+                self.active_requests -= 1
 
         # play the highest rated move
         highest_rated = ["", 0]
-        for move in final_move_list:
+        for move in move_list:
             if move[1] > highest_rated[1]:
                 highest_rated = move
 
