@@ -30,15 +30,13 @@ class engine:
 
         self.all_threads = []
         for _ in range(mp.cpu_count() - 1):
-            new_thread = mp.Process(target= computer.run, args= (self.unsolved_queue, self.solved_queue, ))
+            new_thread = mp.Process(target= worker.run, args= (self.unsolved_queue, self.solved_queue, ))
             self.all_threads.append(new_thread)
         for thread in self.all_threads:
             thread.start()
 
-
-
     def close(self):
         pass
 
-    def play(self, tlim):
+    def play(self, board, tlim):
         pass
