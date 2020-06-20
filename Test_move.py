@@ -1,6 +1,8 @@
 import chess
 import chess.engine
 import math
+import time
+
 import RandomEngine as eng1
 #import rematch as eng1
 
@@ -27,7 +29,7 @@ while not board.is_game_over():
     if board.is_game_over():
         break
 
-    result = input('your move negro\n')
+    result = input('your move black\n')
     if result == "0000":
         print("black null")
         break

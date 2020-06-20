@@ -1,6 +1,8 @@
 import chess
 import chess.engine
 import math
+import time
+
 import RandomEngine as eng1
 import RandomEngine as eng2
 #import rematch as eng1
@@ -17,7 +19,12 @@ tlim = 1
 board = chess.Board()
 
 while not board.is_game_over():
+
+    start_time = time.clock()
     result = White.play(board, chess.engine.Limit(time=tlim))
+    end_time = time.clock()
+    if end_time - start_time > tlim:
+        print("went over time by " + str(end_time - start_time - tlim) + " sec")
     if board.uci(result) == "0000":
         print("white null")
         break
@@ -31,7 +38,11 @@ while not board.is_game_over():
     if board.turn > 50:
         break
 
+    start_time = time.clock()
     result = Black.play(board, chess.engine.Limit(time=tlim))
+    end_time = time.clock()
+    if end_time - start_time > tlim:
+        print("went over time by " + str(end_time - start_time - tlim) + " sec")
     if board.uci(result) == "0000":
         print("black null")
         break
