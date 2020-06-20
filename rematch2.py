@@ -6,6 +6,8 @@ import random
 
 'uh oh here here i go again...'
 key_counter = 0
+GLOBAL_MIN = -1000000
+GLOBAL_MAX = 1000000
 
 class engine:
     """
@@ -25,8 +27,6 @@ class engine:
         self.leaves = []
         self.root = None
         self.node_keys = {}
-        self.alpha = None
-        self.beta = None
 
     def request(self):
         """
@@ -50,6 +50,15 @@ class engine:
         leaves_copy = self.leaves.copy()
         for leaf in leaves_copy:
             self.grow_branch(leaf)
+
+        mid_time = time.time()
+
+        play = self.minmax(self.root, GLOBAL_MIN, GLOBAL_MAX, self.root.board().turn, 0)
+        move = play.move
+
+        end_time = time.time()
+
+        return move
 
         # for leaf in self.leaves:
         #     print("val: " + str(leaf.metrics.value))
@@ -104,21 +113,38 @@ class engine:
         self.unsolved_queue.join()
         self.collect_work()
 
-    def minmax(self):
-        """
-        alpha beta mixmaxing
-        returns the best move
-        """
-        self.alpha = -10000000
-        self.beta = 10000000
-        self.recure(root, self.root.board().turn)
-
-    def recur(self, loc, is_max):
-        """
-        im sorry father i have sinned, i had no other option
-        forgive me
-        """
-
+    def minmax(self, node, alpha, beta, im_max, depth):
+        if len(node.variations) == 0:
+            return node.metrics.value
+        pointer = None
+        if im_max:
+            value = GLOBAL_MIN
+            for child in node.variations:
+                res = self.minmax(child, alpha, beta, False, depth + 1)
+                if res > value:
+                    value = res
+                    pointer = child
+                alpha = max(alpha, value)
+                if alpha >= beta:
+                    break
+            if depth == 0:
+                return pointer
+            else:
+                return value
+        else:
+            value = GLOBAL_MAX
+            for child in node.variations:
+                res  = self.minmax(child, alpha, beta, True, depth + 1)
+                if res < value:
+                    value = res
+                    pointer = child
+                beta = min(beta, value)
+                if beta <= alpha:
+                    break
+            if depth == 0:
+                return pointer
+            else:
+                return value
 
 def run(unsolved_queue, solved_queue):
     """

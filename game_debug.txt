@@ -1,12 +1,56 @@
 
 
 White
-g1h3
+d2d4
 r n b q k b n r
 p p p p p p p p
 . . . . . . . .
 . . . . . . . .
+. . . P . . . .
 . . . . . . . .
-. . . . . . . N
-P P P P P P P P
-R N B Q K B . R
+P P P . P P P P
+R N B Q K B N R
+
+Black
+b8c6
+r . b q k b n r
+p p p p p p p p
+. . n . . . . .
+. . . . . . . .
+. . . P . . . .
+. . . . . . . .
+P P P . P P P P
+R N B Q K B N R
+
+White
+c1f4
+r . b q k b n r
+p p p p p p p p
+. . n . . . . .
+. . . . . . . .
+. . . P . B . .
+. . . . . . . .
+P P P . P P P P
+R N . Q K B N R
+
+Black
+b7b6
+r . b q k b n r
+p . p p p p p p
+. p n . . . . .
+. . . . . . . .
+. . . P . B . .
+. . . . . . . .
+P P P . P P P P
+R N . Q K B N R
+
+White
+f4c1
+r . b q k b n r
+p . p p p p p p
+. p n . . . . .
+. . . . . . . .
+. . . P . . . .
+. . . . . . . .
+P P P . P P P P
+R N B Q K B N R
