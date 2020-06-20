@@ -27,14 +27,7 @@ class engine:
         self.start_time = 0
         self.tlim = tlim
 
-    def request(self):
-        return []
-
-    def close(self):
-        pass
-
     def play(self, board, tlim):
-        # some setup
         time0 = time.time()
         self.start_time = time0
         self.key_counter = 0
@@ -46,18 +39,21 @@ class engine:
         for _ in range(self.layers):
             self.grow_layer(self.root)
 
-        time1 = time.time()
-        print("build time = " + str(time1 - time0))
+        # time1 = time.time()
+        # print("build time = " + str(time1 - time0))
 
         play = self.minmax(self.root, GLOBAL_MIN, GLOBAL_MAX, self.root.board().turn, 0)
         move = play.move
 
-        time2 = time.time()
-        print("huristic time = " + str(time2 - time1))
+        # time2 = time.time()
+        # print("huristic time = " + str(time2 - time1))
 
         return move
         
     def compute_value(self, board):
+        """
+        finds the value of the current board
+        """
         ret = 0
         if(board.is_game_over()):
             res = board.result()
@@ -76,6 +72,9 @@ class engine:
         return ret
     
     def grow_layer(self, node):
+        """
+        grows a layer at the end of all branches from the given node
+        """
         if node.is_end():
             for move in node.board().legal_moves:
                 node.add_variation(move)
@@ -84,6 +83,10 @@ class engine:
                 self.grow_layer(child)
         
     def minmax(self, node, alpha, beta, im_max, depth):
+        """
+        implements alpha beta parsing of a huristics tree
+        if time is avaible will extend the tree in intresting situations
+        """
         if node.is_end():
             board = node.parent.board()
             is_cap = board.is_capture(node.move)
@@ -127,6 +130,9 @@ class engine:
                 return value
 
 class helper:
+    """
+    helper to evaluate the board with
+    """
     def __init__(self):
         self.piece_values = {
             chess.PAWN : 1,
