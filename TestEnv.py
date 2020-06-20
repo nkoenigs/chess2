@@ -11,7 +11,12 @@ import rematch3 as eng2
 debug = open("game_debug.txt", "w")
 stack = open("game_stack.pgn", "w")
 
+white_error_time = 0
+black_error_time = 0
+
 def take_turn(board, engine):
+    global black_error_time
+    global white_error_time
     color = "White"
     if board.turn == chess.BLACK:
         color = "Black"
@@ -20,6 +25,11 @@ def take_turn(board, engine):
     end_time = time.time()
     if end_time - start_time > tlim:
         print("went over time by " + str(end_time - start_time - tlim) + " sec")
+        if board.turn:
+            white_error_time += end_time - start_time - tlim
+        else:
+            black_error_time += end_time - start_time - tlim
+
     try:
         if board.uci(result) == "0000":
             print(color + " null")
@@ -54,6 +64,8 @@ if __name__ == '__main__':
     debug.close()
     stack.close()
     print('\n\nGG!')
+    print('White went over by '+ str(white_error_time)+ ' seconds')
+    print('Black went over by '+ str(black_error_time)+ ' seconds')
     try:
         print(str(board.result())+' in '+ str(math.ceil(len(board.move_stack)/2))+'\n\n')
     except:

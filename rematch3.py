@@ -1,4 +1,3 @@
-import multiprocessing as mp
 import time
 import chess
 import chess.pgn
@@ -46,32 +45,17 @@ class engine:
         time1 = time.time()
         print("build time = " + str(time1 - time0))
 
-        # self.find_heuristics(self.root)
-
-        time2 = time.time()
-        self.last_hur_time = time2 - time1
-        print("huristic time = " + str(time2 - time1))
-
         play = self.minmax(self.root, GLOBAL_MIN, GLOBAL_MAX, self.root.board().turn, 0)
         move = play.move
 
-        time3 = time.time()
-        print("minmax time = " + str(time3 - time2))
+        time2 = time.time()
+        print("huristic time = " + str(time2 - time1))
 
         return move
-
-        # for leaf in self.leaves:
-        #     print("val: " + str(leaf.metrics.value))
-
-    def find_heuristics(self, node):
-        if node.is_end():
-            self.compute_value(node)
-        else:
-            for child in node.variations:
-                self.find_heuristics(child)
         
     def compute_value(self, node):
         board = node.board()
+        ret = 0
         if(board.is_game_over()):
             res = board.result()
             if res == '1-0':
@@ -81,15 +65,11 @@ class engine:
             else:
                 pass
         else:
-            piece_v = 0
-            square_v = 0
             map = board.piece_map()
             for square in map:
-                piece_v += self.help.evaluate_piece(map[square])
-                square_v += self.help.evaluate_square(square, map[square])
-
-            ret = piece_v*1000 + square_v
-        # node.comment = str(ret)
+                ret += self.help.evaluate_piece(map[square]) * 1000
+                ret += self.help.evaluate_square(square, map[square]) * 10
+            # ret += self.help.evaluate_attacks(board)
         return ret
     
     def grow_layer(self, node):
@@ -102,7 +82,6 @@ class engine:
         
     def minmax(self, node, alpha, beta, im_max, depth):
         if node.is_end():
-            # return int(node.comment)
             return self.compute_value(node)
         pointer = None
         if im_max:
@@ -116,6 +95,7 @@ class engine:
                 if alpha >= beta:
                     break
             if depth == 0:
+                print('odds are' + str(value))
                 return pointer
             else:
                 return value
@@ -130,6 +110,7 @@ class engine:
                 if beta <= alpha:
                     break
             if depth == 0:
+                print('odds are ' + str(value))
                 return pointer
             else:
                 return value
@@ -165,4 +146,11 @@ class helper:
         value = self.piece_values[piece.piece_type]
         if not piece.color:
             value *= -1
+        return value
+
+    def evaluate_attacks(self, board):
+        value = 0
+        for square in range(64):
+            value += len(board.attackers(True, square))
+            value -= len(board.attackers(False, square))
         return value
