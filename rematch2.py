@@ -135,6 +135,8 @@ def run(unsolved_queue, solved_queue):
             unsolved_queue.task_done()
 
 
+
+
 class metrics:
     """
     An idea is complex object desgined to help workers evaluate moves
