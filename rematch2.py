@@ -37,31 +37,67 @@ class engine:
         pass
 
     def play(self, board, tlim):
-        # get all legal moves
-        if bool(board.legal_moves) == False:
-            return chess.Move.null()
-        move_list = board.legal_moves
+        # some setup
+        start_time = time.time()
+        leaves = create_root(board)
 
-        for move in move_list:
-            self.unsolved_queue.put([move, 0])
-            self.active_requests += 1
-        self.unsolved_queue.join()
 
-        # get the workers results for each board
-        move_list = []
-        while self.active_requests > 0:
-            if not self.solved_queue.empty():
-                rated_move = self.solved_queue.get()
-                move_list.append(rated_move)
-                self.active_requests -= 1
 
-        # play the highest rated move
-        highest_rated = ["", 0]
-        for move in move_list:
-            if move[1] > highest_rated[1]:
-                highest_rated = move
+        # # get all legal moves
+        # if bool(board.legal_moves) == False:
+        #     return chess.Move.null()
+        # move_list = board.legal_moves
 
-        return highest_rated[0]
+        # for move in move_list:
+        #     self.unsolved_queue.put([move, 0])
+        #     self.active_requests += 1
+        # self.unsolved_queue.join()
+
+        # # get the workers results for each board
+        # move_list = []
+        # while self.active_requests > 0:
+        #     if not self.solved_queue.empty():
+        #         rated_move = self.solved_queue.get()
+        #         move_list.append(rated_move)
+        #         self.active_requests -= 1
+
+        # # play the highest rated move
+        # highest_rated = ["", 0]
+        # for move in move_list:
+        #     if move[1] > highest_rated[1]:
+        #         highest_rated = move
+
+        # return highest_rated[0]
+
+def create_root(board):
+    """
+    makes a root for the tree
+    then grows the first layer
+    returns the leaves
+    """
+    root = chess.pgn.Game()
+    root.setup(board.fen())
+    leaves = []
+    for move in root.board().legal_moves:
+        new_node = root.add_variation(move)
+        new_node.metrics = metrics(move)
+        leaves.append(new_node)
+    return leaves
+
+def grow_branch(leaves, parent):
+    """
+    creates child nodes for all avalible moves from a given parent gameNode
+    also modifies the leaves
+    returns a list of all new leaves
+    """
+    leaves.remove(parent)
+    new_leaves = []
+    for move in parent.board.legal_moves:
+        new_node = parent.add_variation(move)
+        new_node.metrics = parent.metrics.childs_metrics()
+        new_leaves.append(new_node)
+        leaves.append(new_node)
+    return new_leaves
 
 def run(unsolved_queue, solved_queue):
     """
@@ -75,10 +111,24 @@ def run(unsolved_queue, solved_queue):
             solved_queue.put(move)
             unsolved_queue.task_done()
 
-# class idea:
-#     """
-#     An idea is complexe object desgined to help workers evaluate moves
-#     """
-#     def __init__(self):
+
+class metrics:
+    """
+    An idea is complex object desgined to help workers evaluate moves
+    """
+    def __init__(self, move):
+        depth = 1
+        root_move = move
+        value = None
+        interest = None
+
+    def childs_metrics(self):
+        """
+        returns updated metrics for my child
+        """
+        childs = metrics(None)
+        childs.depth = self.depth + 1
+        childs.root_move = self.root_move
+        return childs
 
 
