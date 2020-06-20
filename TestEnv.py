@@ -3,7 +3,7 @@ import chess.engine
 import math
 import time
 
-import RandomTake as eng1
+import loopy as eng1
 # import RandomEngine as eng2
 # import rematch2 as eng1
 import rematch2 as eng2
