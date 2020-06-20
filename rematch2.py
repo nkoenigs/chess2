@@ -1,6 +1,7 @@
 import multiprocessing as mp
 import time
 import chess
+import chess.pgn
 import random
 
 'uh oh here here i go again...'
@@ -20,7 +21,7 @@ class engine:
     def __init__(self, tlim):
         self.solved_queue = mp.Queue()
         self.unsolved_queue = mp.JoinableQueue()
-        self.active_requests = 0
+        self.active_nodes = []
 
     def request(self):
         """
@@ -39,8 +40,14 @@ class engine:
     def play(self, board, tlim):
         # some setup
         start_time = time.time()
-        leaves = create_root(board)
+        leaves = self.create_root(board)
 
+        leaves_copy = leaves.copy()
+        for leaf in leaves_copy:
+            self.grow_branch(leaves, leaf)
+
+        for leaf in leaves:
+            print(leaf.metrics.value)
 
 
         # # get all legal moves
@@ -69,35 +76,49 @@ class engine:
 
         # return highest_rated[0]
 
-def create_root(board):
-    """
-    makes a root for the tree
-    then grows the first layer
-    returns the leaves
-    """
-    root = chess.pgn.Game()
-    root.setup(board.fen())
-    leaves = []
-    for move in root.board().legal_moves:
-        new_node = root.add_variation(move)
-        new_node.metrics = metrics(move)
-        leaves.append(new_node)
-    return leaves
+    def create_root(self, board):
+        """
+        makes a root for the tree
+        then grows the first layer
+        returns the leaves
+        """
+        root = chess.pgn.Game.from_board(board)
+        leaves = []
+        for move in root.board().legal_moves:
+            new_node = root.add_variation(move)
+            new_node.metrics = metrics(move)
+            self.unsolved_queue.put(new_node)
+            self.active_requests += 1
+        self.unsolved_queue.join()
 
-def grow_branch(leaves, parent):
-    """
-    creates child nodes for all avalible moves from a given parent gameNode
-    also modifies the leaves
-    returns a list of all new leaves
-    """
-    leaves.remove(parent)
-    new_leaves = []
-    for move in parent.board.legal_moves:
-        new_node = parent.add_variation(move)
-        new_node.metrics = parent.metrics.childs_metrics()
-        new_leaves.append(new_node)
-        leaves.append(new_node)
-    return new_leaves
+        while self.active_requests > 0:
+            if not self.solved_queue.empty():
+                leaves.append(self.solved_queue.get())
+                self.active_requests -= 1
+
+        return leaves
+
+    def grow_branch(self, leaves, parent):
+        """
+        creates child nodes for all avalible moves from a given parent gameNode
+        also modifies the leaves
+        returns a list of all new leaves
+        """
+        leaves.remove(parent)
+
+        for move in parent.board().legal_moves:
+            new_node = parent.add_variation(move)
+            new_node.metrics = parent.metrics.childs_metrics()
+            self.unsolved_queue.put(new_node)
+            self.active_requests += 1
+        self.unsolved_queue.join()
+
+        while self.active_requests > 0:
+            if not self.solved_queue.empty():
+                leaves.append(self.solved_queue.get())
+                self.active_requests -= 1        
+
+        return new_leaves
 
 def run(unsolved_queue, solved_queue):
     """
@@ -106,9 +127,11 @@ def run(unsolved_queue, solved_queue):
     """
     while True:
         if not unsolved_queue.empty():
-            move = unsolved_queue.get()
-            move[1] = random.randrange(1000)
-            solved_queue.put(move)
+            node = unsolved_queue.get()
+
+            node.metrics.value = random.randrange(100)
+
+            solved_queue.put(node)
             unsolved_queue.task_done()
 
 
@@ -117,10 +140,10 @@ class metrics:
     An idea is complex object desgined to help workers evaluate moves
     """
     def __init__(self, move):
-        depth = 1
-        root_move = move
-        value = None
-        interest = None
+        self.depth = 1
+        self.root_move = move
+        self.value = None
+        self.interest = None
 
     def childs_metrics(self):
         """
@@ -131,4 +154,11 @@ class metrics:
         childs.root_move = self.root_move
         return childs
 
-
+class pickleable_data:
+    """
+    a class to enable passing relivant data through a queue
+    """
+    def __init__(self, node, index)
+    self.metrics = node.metrics
+    self.index = index
+    self.after = node.board()
