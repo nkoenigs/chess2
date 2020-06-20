@@ -19,29 +19,14 @@ class engine:
     C.hess
     H.andling
     ENGINE
-    2
+    3
     """
     def __init__(self, tlim):
-        self.solved_queue = mp.Queue()
-        self.unsolved_queue = mp.Queue()
         self.root = None
-        self.tlim = float(tlim)
-        self.key_counter = 0
-        self.keys_left = 0
-        self.node_keys = {}
-        self.last_hur_time = 2
         self.layers = 3
 
     def request(self):
-        """
-        create a pool of workers for main to start
-        """
-        pool = []
-        for _ in range(mp.cpu_count() - 1):
-            new_thread = mp.Process(target= run, args= (self.unsolved_queue, self.solved_queue, ))
-            new_thread.daemon = True
-            pool.append(new_thread)
-        return pool
+        return []
 
     def close(self):
         pass
@@ -53,11 +38,6 @@ class engine:
         self.keys_left = 0
         self.root = chess.pgn.Game()
         self.root.setup(board.fen())
-
-        if self.last_hur_time < 0.1 * self.tlim:
-            self.layers += 1
-        if self.last_hur_time > 0.9 * self.tlim:
-            self.layers -= 1
 
         for _ in range(self.layers):
             self.grow_layer(self.root)
