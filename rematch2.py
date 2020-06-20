@@ -28,11 +28,12 @@ class engine:
         self.solved_queue = mp.JoinableQueue()
         self.unsolved_queue = mp.JoinableQueue()
 
-        self.all_threads = []
+        # create and start a pool of workers
+        self.my_pool = []
         for _ in range(mp.cpu_count() - 1):
             new_thread = mp.Process(target= worker.run, args= (self.unsolved_queue, self.solved_queue, ))
-            self.all_threads.append(new_thread)
-        for thread in self.all_threads:
+            self.my_pool.append(new_thread)
+        for thread in self.my_pool:
             thread.start()
 
     def close(self):
