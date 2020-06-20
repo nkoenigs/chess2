@@ -104,20 +104,20 @@ class engine:
         self.unsolved_queue.join()
         self.collect_work()
 
-    # def minmax(self):
-    #     """
-    #     alpha beta mixmaxing
-    #     returns the best move
-    #     """
-    #     self.alpha = -10000000
-    #     self.beta = 10000000
-    #     self.recure(root, self.root.board().turn)
+    def minmax(self):
+        """
+        alpha beta mixmaxing
+        returns the best move
+        """
+        self.alpha = -10000000
+        self.beta = 10000000
+        self.recure(root, self.root.board().turn)
 
-    # def recur(self, loc, is_max):
-    #     """
-    #     im sorry father i have sinned, i had no other option
-    #     forgive me
-    #     """
+    def recur(self, loc, is_max):
+        """
+        im sorry father i have sinned, i had no other option
+        forgive me
+        """
 
 
 def run(unsolved_queue, solved_queue):
