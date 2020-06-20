@@ -4,7 +4,6 @@ import chess.pgn
 import random
 
 'uh oh here here i go again...'
-key_counter = 0
 GLOBAL_MIN = -1000000
 GLOBAL_MAX = 1000000
 
