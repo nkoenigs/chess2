@@ -53,18 +53,17 @@ class engine:
         self.grow_layer(self.root)
 
         time1 = time.time()
+        print("build time = " + str(time1 - time0))
 
-        
+        self.find_heuristics(self.root)
 
         time2 = time.time()
+        print("huristic time = " + str(time2 - time1))
 
         play = self.minmax(self.root, GLOBAL_MIN, GLOBAL_MAX, self.root.board().turn, 0)
         move = play.move
 
         time3 = time.time()
-
-        print("build time = " + str(time1 - time0))
-        print("huristic time = " + str(time2 - time1))
         print("minmax time = " + str(time3 - time2))
 
         return move
@@ -72,6 +71,12 @@ class engine:
         # for leaf in self.leaves:
         #     print("val: " + str(leaf.metrics.value))
 
+    def find_heuristics(self, node):
+        if len(node.variations) == 0:
+            node.comment = str(compute_value(node))
+        else:
+            for child in node.variations:
+                self.find_heuristics(child)
         
 
     def collect_work(self):
@@ -84,23 +89,22 @@ class engine:
                 node = self.node_keys.pop(data.key)
                 node.comment = str(data.value)
 
-
-    def grow_branch(self, parent):
-        """
-        creates child nodes for all avalible moves from a given parent gameNode
-        also modifies the leaves
-        """
-        for move in parent.board().legal_moves:
-            new_node = parent.add_variation(move)
-
     def grow_layer(self, node):
         if len(node.variations) == 0:
-            self.grow_branch(node)
+            for move in node.board().legal_moves:
+                node.add_variation(move)
         else:
             for child in node.variations:
                 self.grow_layer(child)
+                
+        # def grow_branch(self, parent):
+        #     """
+        #     creates child nodes for all avalible moves from a given parent gameNode
+        #     also modifies the leaves
+        #     """
+        #     for move in parent.board().legal_moves:
+        #         parent.add_variation(move)
         
-
     def minmax(self, node, alpha, beta, im_max, depth):
         if len(node.variations) == 0:
             return int(node.comment)
@@ -133,6 +137,9 @@ class engine:
                 return pointer
             else:
                 return value
+
+def compute_value(node):
+    return random.randrange(100) - 50
 
 def run(unsolved_queue, solved_queue):
     """
