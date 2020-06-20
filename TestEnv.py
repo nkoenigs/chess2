@@ -51,8 +51,8 @@ while not board.is_game_over():
     debug.write("\n\nBlack\n" + board.uci(result) + "\n" + str(board))
     stack.write(board.uci(result) + "\n")
 
-eng1.close()
-eng2.close()
+White.close()
+Black.close()
 
 debug.close()
 stack.close()

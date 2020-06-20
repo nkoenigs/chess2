@@ -4,6 +4,7 @@ import multiprocessing as mp
 import time
 
 import helpers
+import worker
 
 'uh oh here here i go again...'
 
@@ -20,12 +21,21 @@ class engine:
     2 
     """
     def __init__(self, tlim):
+        # create helper object for parsing nonsence
         self.helpers = helpers.methods()
+
+        # create queues for interacting with forign threads
         self.solved_queue = mp.JoinableQueue()
         self.unsolved_queue = mp.JoinableQueue()
 
         self.all_threads = []
-        for i in range(mp.cpu_count - 1)
+        for _ in range(mp.cpu_count() - 1):
+            new_thread = mp.Process(target= computer.run, args= (self.unsolved_queue, self.solved_queue, ))
+            self.all_threads.append(new_thread)
+        for thread in self.all_threads:
+            thread.start()
+
+
 
     def close(self):
         pass
