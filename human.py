@@ -7,5 +7,10 @@ class engine:
     def play(self, board, tlim):
         print(board)
         print('')
-        result = input('your move:\n')
-        return chess.Move.from_uci(result)
+        while True:
+            result = input('your move:\n')
+            try:
+                return board.parse_san(result)
+            except:
+                pass
+            

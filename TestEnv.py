@@ -3,7 +3,7 @@ import chess.engine
 import math
 import time
 
-import howard as eng1
+import human as eng1
 # import RandomEngine as eng1
 # import moth as eng1
 import moth as eng2
