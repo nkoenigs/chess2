@@ -3,10 +3,8 @@ import chess.engine
 import math
 import time
 
-import human as eng1
-# import RandomEngine as eng1
-# import moth as eng1
-import moth as eng2
+import ran as eng2
+import moth as eng1
 
 debug = open("game_debug.txt", "w")
 stack = open("game_stack.pgn", "w")
