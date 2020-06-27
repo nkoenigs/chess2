@@ -3,7 +3,7 @@ import chess.engine
 import math
 import time
 
-import ran as eng2
+import excavator as eng2
 import moth as eng1
 
 debug = open("game_debug.txt", "w")
@@ -45,7 +45,7 @@ def take_turn(board, engine):
 if __name__ == '__main__':
     tlim = 5
     print("\n\n\n\n\n\n\n")
-    white_engine = eng1.engine(tlim*4)
+    white_engine = eng1.engine(tlim)
     black_engine = eng2.engine(tlim)
     engines = {True : white_engine, False: black_engine}
         
